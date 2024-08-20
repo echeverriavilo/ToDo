@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h2>Tareas para esta semana</h2>
+  <ul>
+    {% for task in tasks %}
+      <li>
+        <a href="{% url 'task_detail' task.id %}">{{ task.title }}</a> - {{ task.due_date }} - {{ task.get_priority_display }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

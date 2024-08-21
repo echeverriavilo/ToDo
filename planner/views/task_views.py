@@ -1,27 +1,20 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.utils import timezone
+from django.db.models.base import Model as Model
+from django.views.generic import ListView, DetailView,  DeleteView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
-from .models import Task
+from ..models import Task
 
 
-class HomeView(TemplateView):
-    template_name = 'home.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        today = timezone.now().date()
-        week_end = today + timezone.timedelta(days=7)
-        context['tasks'] = Task.objects.filter(user=self.request.user, due_date__range=(today, week_end))
-        return context
-    
 class TaskListView(ListView):
     model = Task
     template_name = 'task_list.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user).order_by('due_date')
+        if self.request.user.is_authenticated:
+            return Task.objects.filter(user=self.request.user).order_by('due_date')
+        else:
+            return Task.objects.none()
 
 class TaskCreateView(CreateView):
     model = Task
@@ -30,8 +23,11 @@ class TaskCreateView(CreateView):
     success_url = reverse_lazy('task_list')
     
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+        if self.request.user.is_authenticated:
+            form.instance.user = self.request.user
+            return super().form_valid(form)
+        else:
+            return super().form_invalid(form)
 
 class TaskUpdateView(UpdateView):
     model = Task

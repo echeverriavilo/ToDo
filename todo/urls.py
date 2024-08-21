@@ -15,8 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from planner.views import (HomeView, TaskListView, TaskCreateView, TaskUpdateView, TaskDeleteView, TaskDetailView)
+from planner.views.home_views import HomeView
+from planner.views.task_views import TaskListView, TaskCreateView, TaskUpdateView, TaskDeleteView, TaskDetailView
+from planner.views.users_views import UserRegistrationView, ProfileUpdateView, ProfileDetailView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +30,9 @@ urlpatterns = [
     path('tasks/<int:pk>', TaskDetailView.as_view(), name = 'task_detail'),
     path('tasks/<int:pk>/edit', TaskUpdateView.as_view(), name = 'task_update'),
     path('tasks/<int:pk>/delete', TaskDeleteView.as_view(), name = 'task_delete'),
-    path('accounts/', include('django.contrib.auth.urls'))
+    path('profile/update/', ProfileUpdateView.as_view(), name = 'profile_update'),
+    path('profile/', ProfileDetailView.as_view(), name = 'profile_detail'),
+    path('login/', auth_views.LoginView.as_view(template_name = 'registration/login.html'), name = 'login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page = 'home'), name = 'logout'),
+    path('register/', UserRegistrationView.as_view(), name = 'register'),
 ]

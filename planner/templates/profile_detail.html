@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2>Perfil de {{ user.username }}</h2>
+<p>Nombre: {{ object.name }}</p>
+<p>Edad: {{ object.age }}</p>
+<p>Correo: {{ object.email }}</p>
+<p>Teléfono: {{ object.phone_number }}</p>
+<a href="{% url 'profile_update' %}">Editar Perfil</a>
+
+{% endblock %}
